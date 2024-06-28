@@ -1,5 +1,6 @@
 import math
-
+import matplotlib.pyplot as plt
+import numpy as np
 M = 500
 eps = 0.000000001
 Max = 0.0
@@ -26,7 +27,9 @@ Ts = [0.0] * (M + 1)
 alfa = [0.0] * (M + 1)
 beta = [0.0] * (M + 1)
 h = L / (M - 1)
-
+TIMES = []
+arrays = []
+#arrays.append(T)
 with open("1.txt", "w") as f:
     for i in range(M + 1):
         T[i] = T0
@@ -77,15 +80,34 @@ with open("1.txt", "w") as f:
 
             if Max <= eps:
                 break
-
+        TIMES.append(Time)
         Time += abs(tau)
-        #print(Time, tau)
-
+        arrays.append(T[1:])
+    Lengh = []
     for i in range(1, M + 1):
+        Lengh.append(h * (i - 1))
         #print(i, h * (i - 1), T[i] - 273)
         f.write(str(h * (i - 1)) + " " + str(T[i] - 273) + "\n")
-print("="*20)
-
-for i in range(M + 1):
-
-    print(f"{Time[i]} : {T[i]}")
+    fig,ax = plt.subplots()
+    T = T[1:]
+    T = np.array(T)
+    T = T - 273
+    ax.plot(Lengh,T)
+    plt.title(f"График в момент {Time}")
+    plt.xlabel("S м")
+    plt.ylabel("T  °C")
+    plt.grid(True)
+    plt.show()
+    matrix = np.vstack(arrays)
+    
+    
+    matrix = np.array(matrix)
+    matrix = matrix - 273
+    Lengh = np.array(Lengh)
+    TIMES = np.array(TIMES)
+    Lengh , TIMES = np.meshgrid(Lengh, TIMES)
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.view_init(elev=0, azim=125)
+    surf = ax.plot_surface(Lengh, TIMES, matrix, cmap='viridis')
+    
